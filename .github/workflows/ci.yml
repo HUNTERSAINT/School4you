@@ -13,7 +13,11 @@ jobs:
         with:
           node-version: 20
       - run: npm install
-      - name: Generate Prisma client\n        run: npx prisma generate\n        env:\n          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/school4you\n      - name: Validate Prisma schema
+      - name: Generate Prisma client
+        run: npx prisma generate
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/school4you
+      - name: Validate Prisma schema
         run: npx prisma validate
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/school4you
