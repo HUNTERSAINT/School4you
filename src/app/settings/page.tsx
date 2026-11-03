@@ -162,7 +162,7 @@ export default function SettingsPage() {
 
         <form onSubmit={addSubject} className={card}>
           <h2 className="font-extrabold">Manage subjects</h2>
-          <p className="mt-1 text-xs text-slate-400">Subjects belong to a class. Grades are calculated as a percentage of the subject's total marks.</p>
+          <p className="mt-1 text-xs text-slate-400">Subjects belong to a class. Grades are calculated as a percentage of the subject&apos;s total marks.</p>
           <label className="mt-4 block text-xs font-bold">Class
             <select required value={classId} onChange={(e) => setClassId(e.target.value)} className={`mt-2 w-full ${field}`}>
               <option value="">Select class</option>

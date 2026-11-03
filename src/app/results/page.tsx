@@ -223,8 +223,8 @@ export default function ResultsPage() {
               </div>
               <p className="mt-4 rounded-lg bg-[#eaf4fb] p-3 text-xs"><b>Overall:</b> {summary.overallGrade ? `Grade ${summary.overallGrade} · ` : ""}{summary.overallRemark}</p>
               <div className="mt-10 grid grid-cols-2 gap-8 text-[11px] text-slate-500">
-                <div className="border-t pt-2">Class teacher's comment and signature</div>
-                <div className="border-t pt-2">Principal's signature and date</div>
+                <div className="border-t pt-2">Class teacher&apos;s comment and signature</div>
+                <div className="border-t pt-2">Principal&apos;s signature and date</div>
               </div>
             </div>
           ) : (
