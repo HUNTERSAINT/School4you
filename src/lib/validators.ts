@@ -16,7 +16,7 @@ export const studentSchema = z.object({
   lastName: z.string().trim().min(1).max(80),
   middleName: z.string().trim().max(80).optional(),
   dateOfBirth: z.string().optional(),
-  sex: z.enum(["Male", "Female", "Other"]).optional(),
+  sex: z.enum(["Male", "Female", "Other"]).optional().or(z.literal("")),
   stateOfOrigin: z.string().trim().max(60).optional(),
   guardianName: z.string().trim().max(120).optional(),
   guardianPhone: z.string().trim().max(30).optional(),
