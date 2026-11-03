@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { BookOpen, CalendarCheck, GraduationCap, LayoutDashboard, Users, Wallet, Settings } from "lucide-react";
 
@@ -10,7 +11,7 @@ const links = [
   { href: "/results", label: "Results", icon: BookOpen },
   { href: "/attendance", label: "Attendance", icon: CalendarCheck },\n  { href: "/settings", label: "Settings", icon: Settings },
 ];
-export function ModuleShell({ title, children }: { title: string; children: React.ReactNode }) {
+export function ModuleShell({ title, children }: { title: string; children: ReactNode }) {
   const pathname = usePathname();
   return <div className="min-h-screen bg-[#f6f8fb] text-slate-800">
     <header className="border-b border-slate-200 bg-white"><div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-4 md:px-8">
