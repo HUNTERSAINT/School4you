@@ -4,30 +4,37 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/school4you
+      AUTH_SECRET: ci-only-secret-value-that-is-long-enough-for-validation
+      AUTH_URL: http://localhost:3000
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
+      # Switch to `npm ci` (and add `cache: npm` above) once package-lock.json is committed.
       - run: npm install
       - name: Generate Prisma client
         run: npx prisma generate
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/school4you
       - name: Validate Prisma schema
         run: npx prisma validate
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/school4you
+      - name: Lint
+        run: npm run lint
       - name: Type check
         run: npm run typecheck
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/school4you
+      - name: Unit tests
+        run: npm test
       - name: Build application
         run: npm run build
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/school4you
-          AUTH_SECRET: ci-only-secret-value-that-is-long-enough-for-validation
-          AUTH_URL: http://localhost:3000
