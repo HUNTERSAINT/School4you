@@ -1,6 +1,7 @@
 "use client";
 import { useEffect,useState,FormEvent } from "react";
-import { ModuleShell } from "@/components/module-shell";\nimport { PieChart,Pie,Cell,Tooltip,ResponsiveContainer } from "recharts";
+import { ModuleShell } from "@/components/module-shell";
+import { PieChart,Pie,Cell,Tooltip,ResponsiveContainer } from "recharts";
 type Student={id:string;firstName:string;lastName:string;classroom:{name:string}};type Term={id:string;name:string;academicYear:{name:string}};type Invoice={id:string;description:string;amountDue:number;amountPaid:number;outstanding:number;status:string;student:Student};
 const naira=(v:number)=>new Intl.NumberFormat("en-NG",{style:"currency",currency:"NGN",maximumFractionDigits:0}).format(v);
 export default function FeesPage(){
