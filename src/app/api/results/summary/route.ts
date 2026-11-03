@@ -8,8 +8,12 @@ export async function GET(request: NextRequest) {
   if(!studentId||!termId)return jsonError("Student and term are required.");
   const student=await prisma.student.findFirst({where:{id:studentId,schoolId:user.schoolId},include:{classroom:true}});
   if(!student)return jsonError("Student not found.",404);
-  const all=await prisma.studentResult.findMany({where:{schoolId:user.schoolId,termId,student:{classroomId:student.classroomId}},include:{student:{select:{id:true,firstName:true,lastName:true,admissionNo:true}},subject:true}});
+  const [all,roster]=await Promise.all([
+    prisma.studentResult.findMany({where:{schoolId:user.schoolId,termId,student:{classroomId:student.classroomId}},include:{student:{select:{id:true,firstName:true,lastName:true,admissionNo:true}},subject:true}}),
+    prisma.student.findMany({where:{schoolId:user.schoolId,classroomId:student.classroomId,status:"ACTIVE"},select:{id:true,firstName:true,lastName:true}})
+  ]);
   const totals=new Map<string,{name:string;total:number;subjects:number}>();
+  for(const item of roster)totals.set(item.id,{name:`${item.firstName} ${item.lastName}`,total:0,subjects:0});
   for(const row of all){const current=totals.get(row.studentId)||{name:`${row.student.firstName} ${row.student.lastName}`,total:0,subjects:0};current.total+=Number(row.totalScore);current.subjects++;totals.set(row.studentId,current);}
   const own=totals.get(studentId)||{name:`${student.firstName} ${student.lastName}`,total:0,subjects:0};
   const classTotals=[...totals.values()].map(v=>v.total);
