@@ -1,0 +1,30 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm install
+      - name: Validate Prisma schema
+        run: npx prisma validate
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/school4you
+      - name: Type check
+        run: npm run typecheck
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/school4you
+      - name: Build application
+        run: npm run build
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/school4you
+          AUTH_SECRET: ci-only-secret-value-that-is-long-enough-for-validation
+          AUTH_URL: http://localhost:3000
