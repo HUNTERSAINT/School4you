@@ -7,7 +7,7 @@ School4you is a multi-school management application by **Mazi Saint Concepts**. 
 - Next.js App Router, TypeScript and Tailwind CSS
 - School onboarding and administrator login with bcrypt password hashing and signed, HTTP-only session cookies
 - School-scoped Prisma/PostgreSQL schema and APIs
-- Student registration and class/subject setup
+- Student registration, editing, archiving, class/subject setup and staff account management for teachers and bursars
 - Fee invoices, partial-payment calculations, Paystack initialization, signed webhook verification and server-side transaction verification
 - Daily attendance with present, absent, late and excused statuses
 - CA/exam score entry, configurable subject maximum scores, automatic grades, report totals, class average, class position and printable report view
