@@ -4,14 +4,14 @@ School4you is a school management platform by **Mazi Saint Concepts** for studen
 
 ## Current status
 
-The repository contains the initial responsive dashboard UI and project foundation. Dashboard figures and student rows are demonstration data only; they are not connected to a live school database or payment provider yet.
+The repository now contains the initial responsive dashboard UI, a multi-school PostgreSQL/Prisma data model, and reusable fee-status and grading calculations. Dashboard figures and student rows are demonstration data only; authentication, database-backed screens and live payment processing are not implemented yet.
 
 ## Stack
 
 - Next.js App Router + TypeScript
 - Tailwind CSS
 - Recharts for dashboard visualisations
-- PostgreSQL planned for persistent school data
+- PostgreSQL with Prisma schema for schools, users, classes, students, terms, fees, payments, attendance, results and audit logs
 - Paystack planned for school-fee collection and verified webhook updates
 
 ## Getting started
@@ -19,7 +19,9 @@ The repository contains the initial responsive dashboard UI and project foundati
 1. Install Node.js 20.9 or later.
 2. Install dependencies: `npm install`
 3. Copy `.env.example` to `.env.local` and fill in local development values as features are added.
-4. Start the development server: `npm run dev`
+4. Generate the Prisma client: `npm run db:generate`
+5. Apply database migrations after configuring PostgreSQL: `npm run db:migrate`
+6. Start the development server: `npm run dev`
 5. Open http://localhost:3000
 
 ## Planned modules
