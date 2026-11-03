@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { randomUUID } from "node:crypto";
 import { hash } from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { createSession } from "@/lib/auth";
@@ -14,7 +15,7 @@ export async function POST(request: NextRequest) {
   const existing = await prisma.user.findUnique({ where: { email: data.adminEmail.toLowerCase() } });
   if (existing) return jsonError("An account with this email already exists.", 409);
   const base = data.schoolName.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 45) || "school";
-  const slug = `${base}-${crypto.randomUUID().slice(0, 6)}`;
+  const slug = `${base}-${randomUUID().slice(0, 6)}`;
   const passwordHash = await hash(data.password, 12);
   const school = await prisma.$transaction(async tx => {
     const created = await tx.school.create({ data: { name: data.schoolName, slug, email: data.schoolEmail || null, phone: data.schoolPhone || null, address: data.schoolAddress || null } });
