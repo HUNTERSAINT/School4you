@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { compare, hashSync } from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { createSession } from "@/lib/auth";
-import { jsonError } from "@/lib/http";
+import { jsonError, logError } from "@/lib/http";
 import { loginSchema } from "@/lib/validators";
 import { clearRateLimit, clientIp, rateLimit } from "@/lib/rate-limit";
 
@@ -26,7 +26,13 @@ export async function POST(request: NextRequest) {
     return jsonError("Too many sign-in attempts. Please wait a few minutes and try again.", 429, { "Retry-After": String(retryAfter) });
   }
 
-  const user = await prisma.user.findUnique({ where: { email } });
+  let user;
+  try {
+    user = await prisma.user.findUnique({ where: { email } });
+  } catch (error) {
+    logError("login", error);
+    return jsonError("We could not reach the database. Please try again in a moment.", 503);
+  }
   const passwordMatches = await compare(password, user?.passwordHash ?? getDummyHash());
   if (!user || !passwordMatches || !user.isActive || !user.schoolId) return jsonError("Email or password is incorrect.", 401);
 

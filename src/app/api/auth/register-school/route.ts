@@ -20,8 +20,13 @@ export async function POST(request: NextRequest) {
   if (!parsed.success) return jsonError(parsed.error.issues[0]?.message ?? "Please check the school and administrator details.");
   const data = parsed.data;
 
-  const existing = await prisma.user.findUnique({ where: { email: data.adminEmail } });
-  if (existing) return jsonError("An account with this email already exists.", 409);
+  try {
+    const existing = await prisma.user.findUnique({ where: { email: data.adminEmail } });
+    if (existing) return jsonError("An account with this email already exists.", 409);
+  } catch (error) {
+    logError("register-school:lookup", error);
+    return jsonError("We could not reach the database. Please try again in a moment.", 503);
+  }
 
   const base = data.schoolName.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 45) || "school";
   const slug = `${base}-${randomUUID().slice(0, 6)}`;
