@@ -7,9 +7,9 @@ export async function GET() {
   if (isResponse(user)) return user;
   const today = new Date(); today.setUTCHours(0,0,0,0);
   const tomorrow = new Date(today); tomorrow.setUTCDate(tomorrow.getUTCDate()+1);
-  const [studentCount, activeStudents, invoices, payments, attendance] = await Promise.all([
+  const [studentCount, activeStudents, activeStudentRows, invoices, payments, attendance] = await Promise.all([
     prisma.student.count({ where: { schoolId: user.schoolId } }),
-    prisma.student.count({ where: { schoolId: user.schoolId, status: "ACTIVE" } }),
+    prisma.student.count({ where: { schoolId: user.schoolId, status: "ACTIVE" } }),\n    prisma.student.findMany({ where: { schoolId: user.schoolId, status: "ACTIVE" }, select: { id: true } }),
     prisma.feeInvoice.findMany({ where: { schoolId: user.schoolId }, include: { payments: { where: { status: "SUCCESSFUL" }, select: { amount: true } } } }),
     prisma.payment.aggregate({ where: { schoolId: user.schoolId, status: "SUCCESSFUL" }, _sum: { amount: true }, _count: true }),
     prisma.attendanceRecord.findMany({ where: { session: { schoolId: user.schoolId, date: { gte: today, lt: tomorrow } } }, select: { status: true } }),
