@@ -1,14 +1,14 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, CalendarCheck, GraduationCap, LayoutDashboard, Users, Wallet } from "lucide-react";
+import { BookOpen, CalendarCheck, GraduationCap, LayoutDashboard, Users, Wallet, Settings } from "lucide-react";
 
 const links = [
   { href: "/", label: "Overview", icon: LayoutDashboard },
   { href: "/students", label: "Students", icon: Users },
   { href: "/fees", label: "School fees", icon: Wallet },
   { href: "/results", label: "Results", icon: BookOpen },
-  { href: "/attendance", label: "Attendance", icon: CalendarCheck },
+  { href: "/attendance", label: "Attendance", icon: CalendarCheck },\n  { href: "/settings", label: "Settings", icon: Settings },
 ];
 export function ModuleShell({ title, children }: { title: string; children: React.ReactNode }) {
   const pathname = usePathname();
