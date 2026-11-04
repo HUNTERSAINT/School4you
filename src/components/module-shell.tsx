@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { BookOpen, CalendarCheck, GraduationCap, LayoutDashboard, Users, Wallet, Settings } from "lucide-react";
+import { useState } from "react";
 import { useSession } from "@/lib/use-session";
 
 const ADMIN = ["SCHOOL_ADMIN", "SUPER_ADMIN"];
@@ -18,6 +19,7 @@ const links = [
 export function ModuleShell({ title, children }: { title: string; children: ReactNode }) {
   const pathname = usePathname();
   const { user } = useSession();
+  const [resent, setResent] = useState("");
   const visible = links.filter((link) => (user ? link.roles.includes(user.role) : link.href === "/"));
 
   return (
@@ -62,6 +64,22 @@ export function ModuleShell({ title, children }: { title: string; children: Reac
           </div>
         </div>
       </header>
+      {user && !user.emailVerified && (
+        <div className="border-b border-amber-200 bg-amber-50 px-4 py-2 text-center text-xs text-amber-800">
+          Please verify your email address (check your inbox).{" "}
+          <button
+            className="font-bold underline"
+            onClick={async () => {
+              const response = await fetch("/api/auth/resend-verification", { method: "POST" });
+              const data = await response.json().catch(() => ({}));
+              setResent(response.ok ? "Verification email sent." : data.error || "Could not send right now.");
+            }}
+          >
+            Resend email
+          </button>
+          {resent && <span className="ml-2 font-semibold">{resent}</span>}
+        </div>
+      )}
       <main className="mx-auto max-w-7xl px-4 py-8 md:px-8">
         <div className="mb-6">
           <p className="text-xs font-bold uppercase tracking-widest text-[#2583c5]">{user?.schoolName || "School4you workspace"}</p>
@@ -69,7 +87,7 @@ export function ModuleShell({ title, children }: { title: string; children: Reac
         </div>
         {children}
       </main>
-      <footer className="py-8 text-center text-xs text-slate-400">School4you · A product by Mazi Saint Concepts</footer>
+      <footer className="py-8 text-center text-xs text-slate-400">School4you · A product by Mazi Saint Concepts · <Link href="/terms" className="underline">Terms</Link> · <Link href="/privacy" className="underline">Privacy</Link></footer>
     </div>
   );
 }

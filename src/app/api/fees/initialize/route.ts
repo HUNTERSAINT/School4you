@@ -5,6 +5,7 @@ import { requireUser, isResponse, jsonError, logError } from "@/lib/http";
 import { FEE_ROLES } from "@/lib/access";
 import { initializePaymentSchema } from "@/lib/validators";
 import { sumKobo, toKobo } from "@/lib/money";
+import { resolveSubaccount } from "@/lib/paystack";
 
 export const runtime = "nodejs";
 
@@ -19,6 +20,10 @@ export async function POST(request: NextRequest) {
   if (!parsed.success) return jsonError("Provide a valid invoice, amount and payer email.");
   const secret = process.env.PAYSTACK_SECRET_KEY;
   if (!secret) return jsonError("Paystack has not been configured by the school administrator.", 503);
+
+  const school = await prisma.school.findUnique({ where: { id: user.schoolId }, select: { paystackSubaccountCode: true } });
+  const settlement = resolveSubaccount(school?.paystackSubaccountCode, process.env.PAYSTACK_ALLOW_PLATFORM_ACCOUNT === "true");
+  if (!settlement.ok) return jsonError(settlement.error, 409);
 
   const invoice = await prisma.feeInvoice.findFirst({
     where: { id: parsed.data.invoiceId, schoolId: user.schoolId },
@@ -49,6 +54,7 @@ export async function POST(request: NextRequest) {
         email: parsed.data.email,
         amount: toKobo(parsed.data.amount),
         reference,
+        ...(settlement.code ? { subaccount: settlement.code } : {}),
         callback_url: `${process.env.AUTH_URL || request.nextUrl.origin}/fees/verify`,
         metadata: { schoolId: user.schoolId, invoiceId: invoice.id, paymentId: payment.id },
       }),

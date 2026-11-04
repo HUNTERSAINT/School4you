@@ -36,6 +36,11 @@ enum AttendanceStatus {
   EXCUSED
 }
 
+enum TokenType {
+  VERIFY_EMAIL
+  RESET_PASSWORD
+}
+
 enum ResultStatus {
   DRAFT
   PUBLISHED
@@ -49,6 +54,9 @@ model School {
   phone          String?
   address        String?
   logoUrl        String?
+  paystackSubaccountCode String?
+  termsAcceptedAt DateTime?
+  termsVersion   String?
   currency       String        @default("NGN")
   timezone       String        @default("Africa/Lagos")
   createdAt      DateTime      @default(now())
@@ -84,6 +92,7 @@ model User {
   resultsEntered   StudentResult[]     @relation("ResultEditor")
   auditLogs        AuditLog[]
   teacherAssignments TeacherAssignment[]
+  authTokens       AuthToken[]
   @@index([schoolId, role])
 }
 
@@ -277,6 +286,18 @@ model TeacherAssignment {
   createdAt   DateTime  @default(now())
   @@unique([userId, classroomId])
   @@index([schoolId, classroomId])
+}
+
+model AuthToken {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      TokenType
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+  @@index([userId, type])
 }
 
 model AuditLog {

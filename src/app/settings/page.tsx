@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useEffect, useState, FormEvent } from "react";
 import { ModuleShell } from "@/components/module-shell";
+import { SchoolSection } from "@/components/school-section";
 
 type ClassItem = { id: string; name: string; _count?: { students: number } };
 type Subject = { id: string; name: string; maxCaScore: number | string; maxExamScore: number | string };
@@ -191,6 +192,8 @@ export default function SettingsPage() {
           </div>
         </form>
       </div>
+
+      <SchoolSection />
 
       <section className={`mt-5 ${card}`}>
         <h2 className="font-extrabold">Terms and sessions</h2>

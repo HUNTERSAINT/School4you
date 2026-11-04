@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 
-export type ClientUser = { id: string; name: string; email: string; role: string; schoolId: string; schoolName: string };
+export type ClientUser = { id: string; name: string; email: string; role: string; schoolId: string; schoolName: string; emailVerified: boolean };
 
 export const isAdminRole = (role?: string) => role === "SCHOOL_ADMIN" || role === "SUPER_ADMIN";
 

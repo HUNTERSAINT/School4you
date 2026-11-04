@@ -7,6 +7,8 @@ import { isUniqueViolation, jsonError, logError } from "@/lib/http";
 import { onboardingSchema } from "@/lib/validators";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 import { defaultAcademicYear } from "@/lib/terms";
+import { TERMS_VERSION } from "@/lib/legal";
+import { sendVerificationEmail } from "@/lib/account-emails";
 
 export const runtime = "nodejs";
 
@@ -36,7 +38,7 @@ export async function POST(request: NextRequest) {
   try {
     const created = await prisma.$transaction(async (tx) => {
       const school = await tx.school.create({
-        data: { name: data.schoolName, slug, email: data.schoolEmail || null, phone: data.schoolPhone || null, address: data.schoolAddress || null },
+        data: { name: data.schoolName, slug, email: data.schoolEmail || null, phone: data.schoolPhone || null, address: data.schoolAddress || null, termsAcceptedAt: new Date(), termsVersion: TERMS_VERSION },
       });
       const user = await tx.user.create({ data: { schoolId: school.id, name: data.adminName, email: data.adminEmail, passwordHash, role: "SCHOOL_ADMIN" } });
       const academicYear = await tx.academicYear.create({
@@ -48,6 +50,7 @@ export async function POST(request: NextRequest) {
       await tx.auditLog.create({ data: { schoolId: school.id, userId: user.id, action: "SCHOOL_CREATED", entity: "School", entityId: school.id } });
       return { school, user };
     });
+    void sendVerificationEmail(created.user.id, created.user.email, created.user.name);
     await createSession(
       { id: created.user.id, email: created.user.email, name: created.user.name, role: created.user.role, schoolId: created.school.id },
       created.user.sessionVersion,

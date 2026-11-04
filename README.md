@@ -73,3 +73,11 @@ This release adds a `TeacherAssignment` table, a `User.sessionVersion` column, a
 ## Deployment
 
 Railway is the intended hosting platform. Provision PostgreSQL, configure `DATABASE_URL`, `AUTH_SECRET` and `AUTH_URL`, and deploy the `main` branch. Run `npm run db:deploy` once the database is connected before onboarding real school data.
+
+## Compliance and account features
+
+- **Legal pages**: `/terms` and `/privacy` are drafts (Nigeria / NDPA 2023). Have a Nigerian lawyer review them before launch; registration requires an "I agree" tick and stores the accepted version.
+- **Data rights**: school admins can download all school data (`GET /api/export`) and erase a student's personal details (Students page → "Erase data").
+- **Email**: set `RESEND_API_KEY` and `EMAIL_FROM` (verified domain) to enable email verification and forgot-password. Without them the app still works, but no emails are sent.
+- **Payments**: each school pastes its own Paystack subaccount code (Settings). Without one, online payments are blocked unless `PAYSTACK_ALLOW_PLATFORM_ACCOUNT=true`.
+- **Database**: the Railway start command runs `prisma db push`; enable Railway Postgres backups.

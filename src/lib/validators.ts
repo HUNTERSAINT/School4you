@@ -13,6 +13,7 @@ export const onboardingSchema = z.object({
   adminName: z.string().trim().min(2).max(100),
   adminEmail: email,
   password: passwordSchema,
+  acceptTerms: z.literal(true, { errorMap: () => ({ message: "You must accept the Terms of Service and Privacy Policy." }) }),
 });
 export const loginSchema = z.object({ email, password: z.string().min(1).max(128) });
 export const changePasswordSchema = z.object({ currentPassword: z.string().min(1).max(128), newPassword: passwordSchema });
